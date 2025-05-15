@@ -27,7 +27,7 @@ class MakeProjectRequest extends FormRequest
             "demo_link"=> "string|max:255",
             "github_link"=> "string|max:255",
             "image"=> "string|max:255",
-            "status"=> "required|string|max:255|in:planned,current,finished",
+            "status"=> "required|string|max:10|in:planned,current,finished",
             //
         ];
     }

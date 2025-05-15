@@ -37,6 +37,14 @@ class DatabaseSeeder extends Seeder
             'image' => 'https://example.com/image2.jpg',
             'status' => 'finished',
         ]);
+        Project::factory()->create([
+            'title' => 'Project 3',
+            'description' => 'Description for project 3',
+            'demo_link' => 'https://example.com/demo3',
+            'github_link' => 'https://github.com/arturict/portfolio',
+            'image' => 'https://example.com/image3.jpg',
+            'status' => 'planned',
+        ]);
         
     }
 }
