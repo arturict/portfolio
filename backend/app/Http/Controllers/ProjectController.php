@@ -14,20 +14,19 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::all();
-        return response()->json($projects);
-
+        return ProjectResource::collection($projects);
     }
+
     public function store(MakeProjectRequest $project)
     {
         $project = Project::create($project->validated());
-        $project->save();
         return ProjectResource::make($project);
-
     }
-    public function update(UpdateProjectRequest $project)
+
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($project->validated());
-        return  ProjectResource::make($project);
+        $project->update($request->validated());
+        return ProjectResource::make($project);
     }
 
     public function show(Project $project)
@@ -40,5 +39,4 @@ class ProjectController extends Controller
         $project->delete();
         return response()->json(['message' => 'Project deleted successfully']);
     }
-   
 }

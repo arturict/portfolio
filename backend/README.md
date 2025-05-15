@@ -59,3 +59,134 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+# ProjectController API Endpunkte
+
+Diese Dokumentation beschreibt die verfügbaren Endpunkte des `ProjectController` in deinem Laravel-Backend.
+
+## Übersicht der Endpunkte
+
+### 1. Alle Projekte auflisten
+- **Methode:** GET
+- **Pfad:** `/api/projects`
+- **Beschreibung:** Gibt eine Liste aller Projekte als Collection von `ProjectResource` zurück.
+- **Response:**
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "..."
+      // weitere Felder
+    },
+    ...
+  ]
+  ```
+
+### 2. Einzelnes Projekt anzeigen
+- **Methode:** GET
+- **Pfad:** `/api/projects/{project}`
+- **Beschreibung:** Gibt ein einzelnes Projekt als `ProjectResource` zurück.
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "..."
+    // weitere Felder
+  }
+  ```
+
+### 3. Neues Projekt anlegen
+- **Methode:** POST
+- **Pfad:** `/api/projects`
+- **Body:** JSON entsprechend `MakeProjectRequest`
+- **Beschreibung:** Erstellt ein neues Projekt und gibt das erstellte Projekt als `ProjectResource` zurück.
+- **Response:**
+  ```json
+  {
+    "id": 2,
+    "name": "..."
+    // weitere Felder
+  }
+  ```
+
+### 4. Projekt aktualisieren
+- **Methode:** PUT/PATCH
+- **Pfad:** `/api/projects/{project}`
+- **Body:** JSON entsprechend `UpdateProjectRequest`
+- **Beschreibung:** Aktualisiert ein bestehendes Projekt und gibt das aktualisierte Projekt als `ProjectResource` zurück.
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Neuer Name"
+    // weitere Felder
+  }
+  ```
+
+### 5. Projekt löschen
+- **Methode:** DELETE
+- **Pfad:** `/api/projects/{project}`
+- **Beschreibung:** Löscht das angegebene Projekt.
+- **Response:**
+  ```json
+  {
+    "message": "Project deleted successfully"
+  }
+  ```
+
+## Hinweise
+- Alle Endpunkte geben standardmäßig JSON zurück.
+- Die Felder im Response richten sich nach dem `ProjectResource`.
+- Für POST und PUT/PATCH müssen die Daten den jeweiligen Request-Validation-Klassen entsprechen (`MakeProjectRequest`, `UpdateProjectRequest`).
+
+---
+
+## Setup & Entwicklung
+
+1. **Abhängigkeiten installieren**
+   ```bash
+   composer install
+   npm install
+   ```
+2. **.env anpassen**
+   - Kopiere `.env.example` zu `.env` und passe die Werte für SQLite und Mailer an:
+     ```env
+     DB_CONNECTION=sqlite
+     DB_DATABASE=/absolute/path/to/database/database.sqlite
+     MAIL_MAILER=log
+     ```
+3. **App Key generieren**
+   ```bash
+   php artisan key:generate
+   ```
+4. **Migrationen & Seeder ausführen**
+   ```bash
+   php artisan migrate --seed
+   ```
+5. **Entwicklungsserver starten**
+   ```bash
+   php artisan serve
+   ```
+6. **Vite-Dev-Server für Frontend starten** (optional)
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## OpenAPI/Swagger Dokumentation
+
+Die API ist mit OpenAPI/Swagger dokumentiert. Du kannst z.B. [ma-d-z/swagger-generator](https://github.com/ma-d-z/swagger-generator) nutzen, um automatisch eine Swagger-Dokumentation zu generieren:
+
+```bash
+composer require --dev ma-d-z/swagger-generator
+php artisan swagger:generate
+```
+
+Das generierte Swagger-UI findest du dann unter `/swagger` (sofern entsprechend konfiguriert).
+
+---
+
+> Stand: 15.05.2025
