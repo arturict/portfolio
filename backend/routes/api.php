@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login', [ UserController::class, 'login']);
 Route::post('/register', [ UserController::class, 'store']);
 Route::get('/projects', [ProjectController::class, 'index']);

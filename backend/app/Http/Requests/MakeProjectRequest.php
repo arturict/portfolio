@@ -23,10 +23,10 @@ class MakeProjectRequest extends FormRequest
     {
         return [
             "name"=> "required|string|max:255",
-            "description"=> "string|max:255",
-            "demo_link"=> "string|max:255",
-            "github_link"=> "string|max:255",
-            "image"=> "string|max:255",
+            "description"=> "nullable|string|max:255",
+            "demo_link"=> "nullable|string|max:255",
+            "github_link"=> "nullable|string|max:255",
+            "image"=> "nullable|string|max:255",
             "status"=> "required|string|max:10|in:planned,current,finished",
             //
         ];

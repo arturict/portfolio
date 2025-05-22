@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('name'); // Changed from title to name
             $table->text('description')->nullable();
             $table->string('demo_link')->nullable();
             $table->string('github_link')->nullable();
