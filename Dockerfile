@@ -1,46 +1,73 @@
-# Dockerfile für Laravel Backend mit PHP-FPM, Composer und Node.js (für Vite)
+# Multi-stage Dockerfile for Laravel Backend + React Frontend
 
-FROM php:8.2-fpm
+# Stage 1: Build Frontend
+FROM node:18-alpine AS frontend-builder
 
-# System- und PHP-Abhängigkeiten installieren
-RUN apt-get update \
-    && apt-get install -y \
-        git \
-        curl \
-        libpng-dev \
-        libonig-dev \
-        libxml2-dev \
-        zip \
-        unzip \
-        npm \
-        nodejs \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+WORKDIR /app/frontend
 
-# Composer installieren
+# Copy frontend package files
+COPY frontend/package*.json ./
+RUN npm ci --only=production
+
+# Copy frontend source and build
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: PHP Backend with Frontend Assets
+FROM php:8.2-fpm-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    nginx \
+    supervisor
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Arbeitsverzeichnis setzen
+# Set working directory
 WORKDIR /var/www
 
-# Abhängigkeiten kopieren und installieren
+# Copy backend composer files and install dependencies
 COPY backend/composer.json backend/composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader
+RUN composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
 
-# Node-Module installieren (für Vite Build)
-COPY backend/package.json backend/package-lock.json ./
-RUN npm install
-
-# Quellcode kopieren
+# Copy backend source code
 COPY backend/ .
 
-# Autoloader und Vite Build
+# Copy built frontend assets to Laravel public directory
+COPY --from=frontend-builder /app/frontend/dist ./public/frontend
+
+# Generate optimized autoloader
 RUN composer dump-autoload --optimize
-# Optional: Vite Build für Produktion
-# RUN npm run build
 
-# Rechte setzen (optional, je nach Setup)
+# Set permissions
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+    && chmod -R 755 /var/www/storage \
+    && chmod -R 755 /var/www/bootstrap/cache
 
-EXPOSE 9000
-CMD ["php-fpm"]
+# Copy Nginx configuration
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/default.conf /etc/nginx/http.d/default.conf
+
+# Copy Supervisor configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create necessary directories
+RUN mkdir -p /var/log/supervisor \
+    && mkdir -p /run/nginx
+
+# Expose port
+EXPOSE 80
+
+# Start Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
