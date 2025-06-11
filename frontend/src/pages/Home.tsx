@@ -109,7 +109,7 @@ const Home: React.FC = () => {
             </Link>
             <a
               href="mailto:artur@ferreiracruz.com"
-              className="btn-outline border-white text-white hover:bg-white hover:text-gray-900 text-lg px-8 py-3"
+              className="btn-outline border-white text-black hover:bg-white hover:text-gray-900 text-lg px-8 py-3"
             >
               Contact Me
             </a>
