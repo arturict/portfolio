@@ -25,7 +25,9 @@ class ProjectController extends Controller
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($request->validated());
+        $data = $request->validated();
+        unset($data['name']); // Remove 'name' to avoid DB error
+        $project->update($data);
         return ProjectResource::make($project);
     }
 

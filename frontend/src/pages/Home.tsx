@@ -7,17 +7,17 @@ const Home: React.FC = () => {
     {
       icon: Code,
       title: 'Full-Stack Development',
-      description: 'Building complete web applications with modern technologies and best practices.',
+      description: 'Building complete web applications with Laravel backend and modern frontend technologies, containerized with Docker.',
     },
     {
       icon: Palette,
-      title: 'UI/UX Design',
-      description: 'Creating beautiful, intuitive interfaces that provide exceptional user experiences.',
+      title: 'Homelab Management',
+      description: 'Operating a Proxmox-based homelab environment hosting various self-hosted services including this website, all orchestrated with Docker containers.',
     },
     {
       icon: Zap,
       title: 'Performance Optimization',
-      description: 'Ensuring fast, efficient applications that scale with your business needs.',
+      description: 'Leveraging Laravel\'s performance features and Docker\'s scalability to create efficient applications that grow with your needs.',
     },
   ]
 
@@ -29,11 +29,11 @@ const Home: React.FC = () => {
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
               Hi, I'm{' '}
-              <span className="text-primary-600">Artur Ferreira Cruz</span>
+              <span className="text-primary-600">Artur Ferreira</span>
             </h1>
             <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto animate-slide-up text-balance">
-              Full-stack developer passionate about creating modern web applications 
-              with clean code and exceptional user experiences.
+              Full-stack developer and apprentice application developer completing my training in 2027. 
+              Passionate about Laravel and Docker, I run a personal homelab with Proxmox where this entire website and other containerized services are hosted.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
               <Link
@@ -62,8 +62,9 @@ const Home: React.FC = () => {
               What I Do
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              I specialize in building modern web applications using cutting-edge 
-              technologies and industry best practices.
+              I specialize in full-stack development with Laravel and Docker while learning the craft through 
+              my apprenticeship program. My containerized homelab serves as my personal playground for 
+              experimenting with new technologies and deployment strategies.
             </p>
           </div>
 
@@ -96,7 +97,8 @@ const Home: React.FC = () => {
             Ready to Work Together?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let's discuss your project and bring your ideas to life with modern web technologies.
+            Although I'm still in my apprenticeship program until 2027, I'm eager to collaborate 
+            on interesting Laravel and Docker-based projects and expand my skills through real-world challenges.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
