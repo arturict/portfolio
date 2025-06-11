@@ -13,12 +13,19 @@ services:
       - APP_KEY=base64:your-app-key-here
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/database/database.sqlite
+      # Optional: weitere ENV-Variablen wie MAIL_*, CACHE_DRIVER, SESSION_DRIVER
+      # Alternativ: env_file: .env
     volumes:
       - ./backend/database:/var/www/database
       - ./backend/storage:/var/www/storage
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  # Optional: Add a database service if needed
+  # Optional: MySQL-Datenbankservice für Produktion
   # mysql:
   #   image: mysql:8.0
   #   environment:
@@ -29,6 +36,8 @@ services:
   #   volumes:
   #     - mysql_data:/var/lib/mysql
   #   restart: unless-stopped
+  #   ports:
+  #     - "3306:3306"
 
 # volumes:
 #   mysql_data:

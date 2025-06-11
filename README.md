@@ -88,18 +88,52 @@ A modern full-stack portfolio application built with Laravel backend and React f
    ```bash
    docker-compose up --build
    ```
-   
-   The application will be available at `http://localhost:8080`
+   Die Anwendung ist dann unter `http://localhost:8080` erreichbar.
 
-2. **Environment Variables**
-   
-   Update the `docker-compose.yml` file with your production settings:
-   ```yaml
-   environment:
-     - APP_ENV=production
-     - APP_KEY=your-app-key-here
-     - DB_CONNECTION=sqlite
+   **Hinweise:**
+   - Persistente Daten werden in `./backend/database` und `./backend/storage` gespeichert (siehe Volumes in `docker-compose.yml`).
+   - Umgebungsvariablen können direkt in `docker-compose.yml` oder über eine `.env`-Datei gesetzt werden.
+   - Healthcheck prüft `/health`-Route (siehe Laravel-Route-Beispiel in DEPLOYMENT.md).
+   - Für MySQL statt SQLite: MySQL-Service in `docker-compose.yml` aktivieren und ENV anpassen.
+
+2. **Production Build & Run (ohne Compose)**
+   ```bash
+   docker build -t portfolio-app:latest .
+   docker run -d \
+     --name portfolio-app \
+     -p 8080:80 \
+     -e APP_ENV=production \
+     -e APP_KEY=your-app-key \
+     -e DB_CONNECTION=sqlite \
+     -v $(pwd)/backend/database:/var/www/database \
+     -v $(pwd)/backend/storage:/var/www/storage \
+     --restart unless-stopped \
+     portfolio-app:latest
    ```
+   Für MySQL:
+   ```bash
+   docker run -d \
+     --name portfolio-app \
+     -p 8080:80 \
+     -e APP_ENV=production \
+     -e APP_KEY=your-app-key \
+     -e DB_CONNECTION=mysql \
+     -e DB_HOST=mysql \
+     -e DB_PORT=3306 \
+     -e DB_DATABASE=portfolio \
+     -e DB_USERNAME=portfolio \
+     -e DB_PASSWORD=portfolio \
+     portfolio-app:latest
+   ```
+
+3. **Datenbank- und Storage-Volumes**
+   - SQLite: Volume `./backend/database` wird gemountet.
+   - MySQL: Siehe Beispielservice in `docker-compose.yml` und aktiviere das Volume `mysql_data`.
+
+4. **Troubleshooting**
+   - Prüfe Logs mit `docker logs portfolio-app`
+   - Healthcheck schlägt fehl? Prüfe, ob `/health`-Route in Laravel existiert und erreichbar ist.
+   - Berechtigungen: Stelle sicher, dass `backend/storage` und `backend/database` vom Container beschreibbar sind.
 
 ## 📁 Project Structure
 
