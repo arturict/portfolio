@@ -4,29 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'title',
         'description',
         'demo_link',
         'github_link',
         'image',
         'status',
+        'user_id',
     ];
 
-    // Add accessor to handle both 'name' and 'title' fields
-    public function getTitleAttribute($value)
-    {
-        return $value ?: $this->attributes['name'] ?? null;
-    }
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
-    public function getNameAttribute($value)
+    public function user(): BelongsTo
     {
-        return $value ?: $this->attributes['title'] ?? null;
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

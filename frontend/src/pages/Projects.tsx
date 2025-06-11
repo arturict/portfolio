@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Search, Filter } from 'lucide-react'
-import { useProjects } from '@/hooks/useProjects'
+import { usePublicProjects } from '@/hooks/useProjects'
 import ProjectCard from '@/components/ProjectCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import type { Project } from '@/types'
 
 const Projects: React.FC = () => {
-  const { projects, isLoading, error } = useProjects()
+  const { projects, isLoading, error } = usePublicProjects()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<Project['status'] | 'all'>('all')
 

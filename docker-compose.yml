@@ -10,11 +10,16 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_KEY=base64:your-app-key-here
+      - APP_KEY=${APP_KEY:-base64:your-app-key-here}
+      - APP_URL=${APP_URL:-http://localhost:8080}
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/database/database.sqlite
-      # Optional: weitere ENV-Variablen wie MAIL_*, CACHE_DRIVER, SESSION_DRIVER
-      # Alternativ: env_file: .env
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change-me-in-production}
+      - SESSION_DRIVER=database
+      - CACHE_DRIVER=database
+      - QUEUE_CONNECTION=database
+      - SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,localhost:8080}
+      - SESSION_DOMAIN=${SESSION_DOMAIN:-localhost}
     volumes:
       - ./backend/database:/var/www/database
       - ./backend/storage:/var/www/storage

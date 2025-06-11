@@ -11,7 +11,7 @@ class UpdateProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check(); // Only authenticated users can update projects
     }
 
     /**
@@ -22,13 +22,12 @@ class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name"=> "string|max:255",
-            "title"=> "string|max:255",
+            "title"=> "sometimes|required|string|max:255",
             "description"=> "nullable|string|max:1000",
             "demo_link"=> "nullable|url|max:255",
             "github_link"=> "nullable|url|max:255",
             "image"=> "nullable|url|max:255",
-            "status"=> "string|max:10|in:planned,current,finished",
+            "status"=> "sometimes|required|string|max:10|in:planned,current,finished",
         ];
     }
 

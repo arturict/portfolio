@@ -11,7 +11,7 @@ class MakeProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check(); // Only authenticated users can create projects
     }
 
     /**
@@ -22,8 +22,7 @@ class MakeProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name"=> "required|string|max:255",
-            "title"=> "string|max:255",
+            "title"=> "required|string|max:255",
             "description"=> "nullable|string|max:1000",
             "demo_link"=> "nullable|url|max:255",
             "github_link"=> "nullable|url|max:255",

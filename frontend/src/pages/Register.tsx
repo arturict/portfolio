@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@/contexts/AuthContext'
-import type { RegisterData } from '@/types'
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name too long'),

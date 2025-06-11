@@ -12,7 +12,7 @@ export const useProjects = () => {
     try {
       setIsLoading(true)
       setError(null)
-      const data = await projectsApi.getAll()
+      const data = await projectsApi.getUserProjects()
       setProjects(data)
     } catch (err: any) {
       const message = err.response?.data?.message || 'Failed to fetch projects'
@@ -108,4 +108,37 @@ export const useProject = (id: number) => {
   }, [id])
 
   return { project, isLoading, error }
+}
+
+// Hook for public projects (portfolio view)
+export const usePublicProjects = () => {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchProjects = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const data = await projectsApi.getAll()
+      setProjects(data)
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Failed to fetch projects'
+      setError(message)
+      console.error('Error fetching public projects:', message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  return {
+    projects,
+    isLoading,
+    error,
+    fetchProjects,
+  }
 }

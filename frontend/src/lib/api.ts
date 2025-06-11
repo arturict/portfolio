@@ -69,6 +69,11 @@ export const projectsApi = {
     return response.data.data
   },
 
+  getUserProjects: async (): Promise<Project[]> => {
+    const response = await api.get<{ data: Project[] }>('/user/projects')
+    return response.data.data
+  },
+
   getById: async (id: number): Promise<Project> => {
     const response = await api.get<{ data: Project }>(`/projects/${id}`)
     return response.data.data
