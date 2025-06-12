@@ -27,7 +27,8 @@ WORKDIR /var/www
 
 # Copy composer files and install dependencies
 COPY composer.json composer.lock ./
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer config -g secure-http false && \
+    COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 # Copy application code
 COPY . .
