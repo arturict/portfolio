@@ -31,8 +31,8 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+# Install Composer using official installer
+RUN /bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
 
 # Set working directory
 WORKDIR /var/www
