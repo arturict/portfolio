@@ -1,24 +1,4 @@
-# Multi-stage Dockerfile for Laravel Backend + React Frontend
-# Using Debian-based images for better compatibility
-
-# Stage 1: Build Frontend
-FROM node:18 AS frontend-builder
-
-WORKDIR /app/frontend
-
-# Copy frontend package files
-COPY frontend/package*.json ./
-
-# Install dependencies with SSL workaround
-RUN npm config set strict-ssl false && \
-    npm ci --include=dev
-
-# Copy frontend source and build
-COPY frontend/ ./
-RUN npm config set strict-ssl false && \
-    npx tsc && npx vite build
-
-# Stage 2: PHP Backend with Frontend Assets
+# Laravel Backend Dockerfile
 FROM php:8.2-fpm
 
 # Install system dependencies
@@ -39,27 +19,24 @@ RUN apt-get update && apt-get install -y \
 # Install PHP extensions
 RUN docker-php-ext-install pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer from official image
+# Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy backend composer files and install dependencies
-COPY backend/composer.json backend/composer.lock ./
+# Copy composer files and install dependencies
+COPY composer.json composer.lock ./
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer config -g secure-http false && \
-    COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --optimize-autoloader
+    COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-# Copy backend source code
-COPY backend/ .
-
-# Copy built frontend assets to Laravel public directory
-COPY --from=frontend-builder /app/frontend/dist ./public/frontend
+# Copy application code
+COPY . .
 
 # Copy production environment file
-COPY backend/.env.production .env
+COPY .env.production .env
 
-# Generate application key and optimize for production without running scripts
+# Generate Laravel key and optimize
 RUN php artisan key:generate --force && \
     COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-scripts
 
@@ -71,7 +48,7 @@ RUN mkdir -p /var/www/database /var/www/storage/logs /var/www/storage/framework/
     chmod -R 755 /var/www/bootstrap/cache && \
     chmod -R 755 /var/www/database
 
-# Copy Docker configuration files (adapted for Debian nginx)
+# Copy Docker configuration files (adapted for Debian)
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/default.conf /etc/nginx/sites-available/default
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -84,7 +61,7 @@ RUN rm -f /etc/nginx/sites-enabled/default && \
 # Make startup script executable
 RUN chmod +x /usr/local/bin/startup.sh
 
-# Create necessary directories for Debian
+# Create necessary directories
 RUN mkdir -p /var/log/supervisor && \
     mkdir -p /run/nginx && \
     mkdir -p /var/run
