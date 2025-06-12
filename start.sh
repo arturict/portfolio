@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Portfolio Application Startup Script
-echo "🚀 Starting Portfolio Application..."
+echo "🚀 Starting Portfolio Application with separate containers..."
 
 # Check if Docker and Docker Compose are available
 if ! command -v docker &> /dev/null; then
@@ -16,27 +16,32 @@ fi
 
 # Stop any existing containers
 echo "🛑 Stopping existing containers..."
-docker-compose down
+docker compose down
 
 # Build and start the application
 echo "🔨 Building and starting the application..."
-docker-compose up -d --build
+docker compose up -d --build
 
 # Wait for the application to be ready
 echo "⏳ Waiting for the application to start..."
-sleep 10
+sleep 15
 
-# Check if the application is running
+# Check if the backend is running
 if curl -s http://localhost:8080/health > /dev/null; then
     echo "✅ Application is running successfully!"
     echo ""
     echo "🌐 Access your application at:"
-    echo "   Frontend: http://localhost:8080"
+    echo "   Frontend: http://localhost:3000"
+    echo "   Backend API: http://localhost:8080/api"
     echo "   Admin Panel: http://localhost:8080/admin"
     echo "   Health Check: http://localhost:8080/health"
     echo ""
-    echo "📋 To view logs: docker-compose logs -f"
-    echo "🛑 To stop: docker-compose down"
+    echo "🔑 Admin credentials:"
+    echo "   Email: artur@ferreiracruz.com"
+    echo "   Password: admin123"
+    echo ""
+    echo "📋 To view logs: docker compose logs -f"
+    echo "🛑 To stop: docker compose down"
 else
-    echo "❌ Application failed to start. Check logs with: docker-compose logs"
+    echo "❌ Application failed to start. Check logs with: docker compose logs"
 fi
