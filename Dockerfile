@@ -39,7 +39,7 @@ WORKDIR /var/www
 
 # Copy backend composer files and install dependencies
 COPY backend/composer.json backend/composer.lock ./
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --optimize-autoloader
 
 # Copy backend source code
 COPY backend/ .
@@ -50,11 +50,8 @@ COPY --from=frontend-builder /app/frontend/dist ./public/frontend
 # Copy production environment file
 COPY backend/.env.production .env
 
-# Generate application key and optimize for production
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Generate application key and optimize for production without running scripts
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-scripts
 
 # Set permissions and create required directories
 RUN mkdir -p /var/www/database /var/www/storage/logs /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views /var/www/bootstrap/cache && \
