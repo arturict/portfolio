@@ -31,15 +31,15 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer using official installer
-RUN /bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
+# Install Composer from official image
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
 # Copy backend composer files and install dependencies
 COPY backend/composer.json backend/composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
 
 # Copy backend source code
 COPY backend/ .
@@ -47,20 +47,31 @@ COPY backend/ .
 # Copy built frontend assets to Laravel public directory
 COPY --from=frontend-builder /app/frontend/dist ./public/frontend
 
-# Generate optimized autoloader
-RUN composer dump-autoload --optimize
+# Copy production environment file
+COPY backend/.env.production .env
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage \
-    && chmod -R 755 /var/www/bootstrap/cache
+# Generate application key and optimize for production
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# Copy Nginx configuration
+# Set permissions and create required directories
+RUN mkdir -p /var/www/database /var/www/storage/logs /var/www/storage/framework/cache /var/www/storage/framework/sessions /var/www/storage/framework/views /var/www/bootstrap/cache && \
+    touch /var/www/database/database.sqlite && \
+    chown -R www-data:www-data /var/www && \
+    chmod -R 755 /var/www/storage && \
+    chmod -R 755 /var/www/bootstrap/cache && \
+    chmod -R 755 /var/www/database
+
+# Copy Docker configuration files
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/default.conf /etc/nginx/http.d/default.conf
-
-# Copy Supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/startup.sh /usr/local/bin/startup.sh
+
+# Make startup script executable
+RUN chmod +x /usr/local/bin/startup.sh
 
 # Create necessary directories
 RUN mkdir -p /var/log/supervisor \
@@ -69,5 +80,5 @@ RUN mkdir -p /var/log/supervisor \
 # Expose port
 EXPOSE 80
 
-# Start Supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start with our startup script
+CMD ["/usr/local/bin/startup.sh"]

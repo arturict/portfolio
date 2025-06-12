@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -21,12 +19,16 @@ services:
       - SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,localhost:8080}
       - SESSION_DOMAIN=${SESSION_DOMAIN:-localhost}
     volumes:
-      - ./backend/database:/var/www/database
-      - ./backend/storage:/var/www/storage
+      - database_data:/var/www/database
+      - storage_data:/var/www/storage
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health" ]
       interval: 30s
       timeout: 10s
       retries: 5
+
+volumes:
+  database_data:
+  storage_data:
    
